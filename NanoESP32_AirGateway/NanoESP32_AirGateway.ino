@@ -219,7 +219,11 @@ void handlePcCommand(const String &line)
 void setup()
 {
     Serial.begin(115200);
-    while (!Serial) { ; }
+    // 避免在无 USB 连接时卡死，超时 1.5s 自动继续
+    uint32_t start_wait = millis();
+    while (!Serial && (millis() - start_wait < 1500)) {
+        delay(10);
+    }
 
     Serial.println(F("=== NanoESP32_AirGateway: UART link with Nano33BLE ==="));
     Serial.println(F("Commands:"));

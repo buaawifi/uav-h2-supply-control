@@ -83,7 +83,11 @@ void handleSerialCommand()
 void setup()
 {
     Serial.begin(115200);
-    while (!Serial) { ; } // 方便 PC 串口接入
+    // 不要无限等待 USB 串口，以便无 PC 连接时也能运行
+    uint32_t start_wait = millis();
+    while (!Serial && (millis() - start_wait < 1500)) {
+        delay(10);
+    }
 
     Serial.println(F("=== Nano33BLE Controller: minimal skeleton ==="));
 
