@@ -64,6 +64,14 @@ void handleSerialCommand()
         g_ctrlState.last_manual_ms = millis();
         Serial.print(F("[CMD] Manual heater_power_pct = "));
         Serial.println(val, 2);
+    } else if (line.startsWith("set valve")) {
+        // 手动模式阀门开度: set valve 30
+        float val = line.substring(String("set valve").length()).toFloat();
+        g_ctrlState.manual_cmd.has_valve_cmd = true;
+        g_ctrlState.manual_cmd.valve_opening_pct = val;
+        g_ctrlState.last_manual_ms = millis();
+        Serial.print(F("[CMD] Manual valve_opening_pct = "));
+        Serial.println(val, 2);
     } else {
         Serial.print(F("[CMD] Unknown: "));
         Serial.println(line);
@@ -121,7 +129,14 @@ void loop()
 
         Serial.print(F(", T0="));
         Serial.print(g_telem.temp_c[0], 2);
-        Serial.print(F(" C, target="));
+        Serial.print(F(" C"));
+        Serial.print(F(", T1="));
+        Serial.print(g_telem.temp_c[1], 2);
+        Serial.print(F(" C"));
+        Serial.print(F(", P="));
+        Serial.print(g_telem.pressure_pa / 1000.0f, 2);  // kPa for readability
+        Serial.print(F(" kPa"));
+        Serial.print(F(", target="));
         Serial.print(g_ctrlState.setpoints.target_temp_c, 2);
 
         Serial.print(F(", heater="));

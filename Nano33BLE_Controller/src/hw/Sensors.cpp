@@ -179,8 +179,6 @@ void Sensors::readAll(Telemetry &telem) {
     const float t1 = readPT100TempC(MAX1_CS_PIN);
     const float t2 = readPT100TempC(MAX2_CS_PIN);
     const float p  = readPressureKPa();
-
-    // 根据你实际的 Telemetry 字段名改这里
     telem.temp_c[0] = t1;
     telem.temp_c[1] = t2;
     telem.temp_count = 2;
