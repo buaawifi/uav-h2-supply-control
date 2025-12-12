@@ -180,8 +180,8 @@ void Sensors::readAll(Telemetry &telem) {
     const float t2 = readPT100TempC(MAX2_CS_PIN);
     const float p  = readPressureKPa();
 
-    // 根据你实际的 Telemetry 字段名改这里
-    telem.t_pt100_1_C = t1;
-    telem.t_pt100_2_C = t2;
-    telem.pressure_kPa = p;
+    telem.temp_c[0] = t1;
+    telem.temp_c[1] = t2;
+    telem.temp_count = 2;
+    telem.pressure_pa = p * 1000.0f;  // Telemetry 中单位是 Pa
 }

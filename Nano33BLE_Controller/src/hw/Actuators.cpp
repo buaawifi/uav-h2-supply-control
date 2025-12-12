@@ -73,8 +73,8 @@ void Actuators::begin() {
 
 void Actuators::apply(const Outputs &out) {
     // 这里假定 Outputs 中是 0–100 的百分比，如有不同请按需缩放
-    int heaterPercent = static_cast<int>(out.heaterPercent);  // 修改字段名以匹配你的结构体
-    int valvePercent  = static_cast<int>(out.valvePercent);   // 修改字段名以匹配你的结构体
+    int heaterPercent = static_cast<int>(out.heater_power_pct);
+    int valvePercent  = static_cast<int>(out.valve_opening_pct);
 
     updateHeaterPWM_Internal(heaterPercent);
     updateValvePWM_Internal(valvePercent, millis());
