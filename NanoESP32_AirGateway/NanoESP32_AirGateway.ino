@@ -3,10 +3,17 @@
 
 using namespace Proto;
 
-// === 硬件串口引脚（Nano ESP32 板载硬件 UART1 是 RX=17, TX=16） ===
-// 如果你改成其它 GPIO，确保与 Nano33BLE 的 TX1/RX1 交叉连接
-static const int UART_RX_PIN = 17;   // ESP32 接收脚 (接 Nano33 BLE 的 TX1)
-static const int UART_TX_PIN = 16;   // ESP32 发送脚 (接 Nano33 BLE 的 RX1)
+// === 硬件串口引脚 ===
+// 使用 Arduino core 为当前板子定义的硬件 Serial1 引脚，避免手动写错 GPIO 号。
+// 如果需要改成别的 IO，可修改下面的宏或直接传入 Serial1.begin 的第三、第四个参数。
+#ifndef PIN_SERIAL1_RX
+#define PIN_SERIAL1_RX 17
+#endif
+#ifndef PIN_SERIAL1_TX
+#define PIN_SERIAL1_TX 16
+#endif
+static const int UART_RX_PIN = PIN_SERIAL1_RX;   // ESP32 接收脚 (接 Nano33 BLE 的 TX1)
+static const int UART_TX_PIN = PIN_SERIAL1_TX;   // ESP32 发送脚 (接 Nano33 BLE 的 RX1)
 
 // === 解码后的遥测结构，仅用于打印 ===
 struct TelemetryShort {
@@ -234,6 +241,10 @@ void setup()
     Serial.println(F("  set valve <pct>"));
 
     // Nano33 BLE 侧 UART
+    Serial.print(F("[UART] Serial1 RX="));
+    Serial.print(UART_RX_PIN);
+    Serial.print(F(" TX="));
+    Serial.println(UART_TX_PIN);
     Serial1.begin(115200, SERIAL_8N1, UART_RX_PIN, UART_TX_PIN);
 }
 

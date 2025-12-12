@@ -92,6 +92,16 @@ void setup()
     Serial.println(F("=== Nano33BLE Controller: minimal skeleton ==="));
 
     // 与 ESP32 的硬件串口（根据你的实际 wiring，是 Serial1 或其它）
+#ifndef PIN_SERIAL1_RX
+#define PIN_SERIAL1_RX 0
+#endif
+#ifndef PIN_SERIAL1_TX
+#define PIN_SERIAL1_TX 1
+#endif
+    Serial.print(F("[UART] Serial1 RX="));
+    Serial.print(PIN_SERIAL1_RX);
+    Serial.print(F(" TX="));
+    Serial.println(PIN_SERIAL1_TX);
     Serial1.begin(115200);       // Nano33 D1/TX1 <-> ESP32 RX, D0/RX1 <-> ESP32 TX
     g_uartLink.begin(Serial1);
 
