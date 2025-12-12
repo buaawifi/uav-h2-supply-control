@@ -122,7 +122,12 @@ void setup()
 {
     Serial.begin(115200);
     Serial.setTimeout(10);
-    while (!Serial) { ; } // 方便 PC 串口接入
+
+    // 避免在无 USB 连接时卡住，最多等待 2 秒后继续，保证与 ESP32 的串口链路能起来
+    uint32_t serialWaitStart = millis();
+    while (!Serial && (millis() - serialWaitStart < 2000)) {
+        delay(10);
+    }
 
     // 与 Nano ESP32 通过硬件串口交互（RX0/TX1）
     Serial1.begin(115200);
