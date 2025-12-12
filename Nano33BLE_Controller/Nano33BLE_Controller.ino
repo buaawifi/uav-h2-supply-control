@@ -7,6 +7,7 @@
 #include "src/hw/Sensors.h"
 #include "src/hw/Actuators.h"
 #include "src/util/SafetyManager.h"
+#include "src/drivers/UartLink.h"
 
 // 全局对象
 ControlState      g_ctrlState;
@@ -17,6 +18,7 @@ Sensors           g_sensors;
 Actuators         g_actuators;
 ModeManager       g_modeManager;
 SafetyManager     g_safety;
+UartLink          g_uartLink;
 
 // 串口命令处理（非常简化）：
 // 支持:
@@ -85,6 +87,10 @@ void setup()
 
     Serial.println(F("=== Nano33BLE Controller: minimal skeleton ==="));
 
+    // 与 ESP32 的硬件串口（根据你的实际 wiring，是 Serial1 或其它）
+    Serial1.begin(115200);       // Nano33 D1/TX1 <-> ESP32 RX, D0/RX1 <-> ESP32 TX
+    g_uartLink.begin(Serial1);
+
     g_ctrlState.reset();
     g_ctrlState.mode = ControlMode::SAFE;
 
@@ -98,6 +104,9 @@ void loop()
 {
     static uint32_t lastPrintMs = 0;
     const uint32_t now = millis();
+
+    // 1) 处理地面经 ESP32 下发来的命令
+    g_uartLink.poll(g_ctrlState);
 
     // 1. 处理串口命令
     handleSerialCommand();
@@ -113,6 +122,13 @@ void loop()
 
     // 5. 应用输出到执行器
     g_actuators.apply(g_outputs);
+
+    // 4) 周期性通过 UART 向 ESP32 发送遥测
+    static uint32_t last_telem_ms = 0;
+    if (now - last_telem_ms >= 100) {  // 10 Hz
+        g_uartLink.sendTelemetry(g_telem, g_outputs, g_ctrlState);
+        last_telem_ms = now;
+    }
 
     // 6. 周期打印状态
     if (now - lastPrintMs >= 1000) {
