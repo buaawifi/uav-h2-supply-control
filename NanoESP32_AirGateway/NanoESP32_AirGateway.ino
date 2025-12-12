@@ -3,9 +3,10 @@
 
 using namespace Proto;
 
-// === 按实际接线修改这两个引脚 ===
-static const int UART_RX_PIN = 5;   // ESP32 接收脚 (接 Nano33 BLE 的 TX1)
-static const int UART_TX_PIN = 4;   // ESP32 发送脚 (接 Nano33 BLE 的 RX1)
+// === 硬件串口引脚（Nano ESP32 板载硬件 UART1 是 RX=17, TX=16） ===
+// 如果你改成其它 GPIO，确保与 Nano33BLE 的 TX1/RX1 交叉连接
+static const int UART_RX_PIN = 17;   // ESP32 接收脚 (接 Nano33 BLE 的 TX1)
+static const int UART_TX_PIN = 16;   // ESP32 发送脚 (接 Nano33 BLE 的 RX1)
 
 // === 解码后的遥测结构，仅用于打印 ===
 struct TelemetryShort {
