@@ -1,3 +1,4 @@
+// src/hw/Actuators.h
 #pragma once
 
 #include <Arduino.h>
@@ -5,8 +6,6 @@
 
 class Actuators {
 public:
-    void begin();
-
-    // 根据 Outputs 施加到具体 IO
-    void apply(const Proto::Outputs &out);
+    static void begin();
+    static void apply(const Proto::Outputs &out);
 };

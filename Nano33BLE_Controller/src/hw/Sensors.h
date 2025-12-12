@@ -1,3 +1,4 @@
+// src/hw/Sensors.h
 #pragma once
 
 #include <Arduino.h>
@@ -6,7 +7,5 @@
 class Sensors {
 public:
     void begin();
-
-    // 写入到传入的 Telemetry 结构体
     void readAll(Proto::Telemetry &telem);
 };
