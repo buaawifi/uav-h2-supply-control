@@ -3,9 +3,17 @@
 
 using namespace Proto;
 
-// === 按实际接线修改这两个引脚 ===
-static const int UART_RX_PIN = 5;   // ESP32 接收脚 (接 Nano33 BLE 的 TX1)
-static const int UART_TX_PIN = 4;   // ESP32 发送脚 (接 Nano33 BLE 的 RX1)
+// === 硬件串口引脚 ===
+// 使用 Arduino core 为当前板子定义的硬件 Serial1 引脚，避免手动写错 GPIO 号。
+// 如果需要改成别的 IO，可修改下面的宏或直接传入 Serial1.begin 的第三、第四个参数。
+#ifndef PIN_SERIAL1_RX
+#define PIN_SERIAL1_RX 17
+#endif
+#ifndef PIN_SERIAL1_TX
+#define PIN_SERIAL1_TX 16
+#endif
+static const int UART_RX_PIN = PIN_SERIAL1_RX;   // ESP32 接收脚 (接 Nano33 BLE 的 TX1)
+static const int UART_TX_PIN = PIN_SERIAL1_TX;   // ESP32 发送脚 (接 Nano33 BLE 的 RX1)
 
 // === 解码后的遥测结构，仅用于打印 ===
 struct TelemetryShort {
@@ -219,7 +227,11 @@ void handlePcCommand(const String &line)
 void setup()
 {
     Serial.begin(115200);
-    while (!Serial) { ; }
+    // 避免在无 USB 连接时卡死，超时 1.5s 自动继续
+    uint32_t start_wait = millis();
+    while (!Serial && (millis() - start_wait < 1500)) {
+        delay(10);
+    }
 
     Serial.println(F("=== NanoESP32_AirGateway: UART link with Nano33BLE ==="));
     Serial.println(F("Commands:"));
@@ -229,6 +241,10 @@ void setup()
     Serial.println(F("  set valve <pct>"));
 
     // Nano33 BLE 侧 UART
+    Serial.print(F("[UART] Serial1 RX="));
+    Serial.print(UART_RX_PIN);
+    Serial.print(F(" TX="));
+    Serial.println(UART_TX_PIN);
     Serial1.begin(115200, SERIAL_8N1, UART_RX_PIN, UART_TX_PIN);
 }
 
