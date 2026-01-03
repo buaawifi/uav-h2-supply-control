@@ -1,0 +1,9 @@
+# Python
+__pycache__/
+*.py[cod]
+
+# Logs & exports
+*.log
+
+# Data exports (uncomment if you do not want CSV outputs tracked)
+*.csv
